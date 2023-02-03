@@ -733,6 +733,16 @@ class LoadImagesAndLabels(Dataset):
 
         return torch.from_numpy(img), labels_out, self.im_files[index], shapes
 
+    ### added ###
+    def read_tif(self, filename, channels=[3]):
+        im = tifffile.imread(filename)
+        # remove channels not needed
+        im2 = np.zeros_like(im)
+        for channel in channels:
+            im2[:, :, channel - 1] = im[:, :, channel - 1]
+        return im2
+    ### added ###
+
     def load_image(self, i):
         # Loads 1 image from dataset index 'i', returns (im, original hw, resized hw)
         im, f, fn = self.ims[i], self.im_files[i], self.npy_files[i],
@@ -744,13 +754,13 @@ class LoadImagesAndLabels(Dataset):
                 # im = cv2.imread(f)  # BGR
                 ### commented out ###
                 ### added ###
-                im = tifffile.imread(f)
+                im = self.read_tif(f)
 
                 # normalize
                 min_, max_ = im.min(axis=(0, 1)), im.max(axis=(0, 1))
-
-                if (max_ - min_ != 0.0).all():
+                with np.errstate(divide='ignore', invalid='ignore'):
                     im = (im - min_) / (max_ - min_)
+                im[np.isnan(im)] = 0                                            # if denomenator is zero
                 im = (im * 255).astype('uint8')
                 ### added ###
                 assert im is not None, f'Image Not Found {f}'
@@ -1023,7 +1033,7 @@ def verify_image_label(args):
     try:
         # verify images
         ### added ###
-        im = tifffile.imread(im_file)
+        im = self.read_tif(im_file)
         shape = im.shape
         ### added ###
 
