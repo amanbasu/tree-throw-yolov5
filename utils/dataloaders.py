@@ -28,6 +28,7 @@ from PIL import ExifTags, Image, ImageOps
 from torch.utils.data import DataLoader, Dataset, dataloader, distributed
 from tqdm import tqdm
 
+import tifffile
 from utils.augmentations import (Albumentations, augment_hsv, classify_albumentations, classify_transforms, copy_paste,
                                  letterbox, mixup, random_perspective)
 from utils.general import (DATASETS_DIR, LOGGER, NUM_THREADS, TQDM_BAR_FORMAT, check_dataset, check_requirements,
@@ -590,10 +591,18 @@ class LoadImagesAndLabels(Dataset):
         # Check image caching requirements vs available memory
         b, gb = 0, 1 << 30  # bytes of cached images, bytes per gigabytes
         n = min(self.n, 30)  # extrapolate from 30 random images
-        for _ in range(n):
-            im = cv2.imread(random.choice(self.im_files))  # sample image
-            ratio = self.img_size / max(im.shape[0], im.shape[1])  # max(h, w)  # ratio
-            b += im.nbytes * ratio ** 2
+
+        ### commented out ###
+        # for _ in range(n):
+            # im = cv2.imread(random.choice(self.im_files))  # sample image
+            # ratio = self.img_size / max(im.shape[0], im.shape[1])  # max(h, w)  # ratio
+            # b += im.nbytes * ratio ** 2
+        ### commented out ###
+
+        ### added ###
+        b = n * 480000
+        ### added ###
+
         mem_required = b * self.n / n  # GB required to cache dataset into RAM
         mem = psutil.virtual_memory()
         cache = mem_required * (1 + safety_margin) < mem.available  # to cache or not to cache, that is the question
@@ -731,13 +740,33 @@ class LoadImagesAndLabels(Dataset):
             if fn.exists():  # load npy
                 im = np.load(fn)
             else:  # read image
-                im = cv2.imread(f)  # BGR
+                ### commented out ###
+                # im = cv2.imread(f)  # BGR
+                ### commented out ###
+                ### added ###
+                im = tifffile.imread(f)
+
+                # normalize
+                min_, max_ = im.min(axis=(0, 1)), im.max(axis=(0, 1))
+
+                if (max_ - min_ != 0.0).all():
+                    im = (im - min_) / (max_ - min_)
+                im = (im * 255).astype('uint8')
+                ### added ###
                 assert im is not None, f'Image Not Found {f}'
             h0, w0 = im.shape[:2]  # orig hw
             r = self.img_size / max(h0, w0)  # ratio
             if r != 1:  # if sizes are not equal
-                interp = cv2.INTER_LINEAR if (self.augment or r > 1) else cv2.INTER_AREA
-                im = cv2.resize(im, (math.ceil(w0 * r), math.ceil(h0 * r)), interpolation=interp)
+                ### commented out ###
+                # interp = cv2.INTER_LINEAR if (self.augment or r > 1) else cv2.INTER_AREA
+                # im = cv2.resize(im, (math.ceil(w0 * r), math.ceil(h0 * r)), interpolation=interp)
+                ### commented out ###
+                ### added ###
+                pad_h = (self.img_size - h0) // 2
+                pad_w = (self.img_size - w0) // 2
+                npad = ((pad_h, pad_h), (pad_w, pad_w), (0, 0))
+                im = np.pad(im, pad_width=npad, mode='constant', constant_values=0)
+                ### added ###
             return im, (h0, w0), im.shape[:2]  # im, hw_original, hw_resized
         return self.ims[i], self.im_hw0[i], self.im_hw[i]  # im, hw_original, hw_resized
 
@@ -993,17 +1022,24 @@ def verify_image_label(args):
     nm, nf, ne, nc, msg, segments = 0, 0, 0, 0, '', []  # number (missing, found, empty, corrupt), message, segments
     try:
         # verify images
-        im = Image.open(im_file)
-        im.verify()  # PIL verify
-        shape = exif_size(im)  # image size
-        assert (shape[0] > 9) & (shape[1] > 9), f'image size {shape} <10 pixels'
-        assert im.format.lower() in IMG_FORMATS, f'invalid image format {im.format}'
-        if im.format.lower() in ('jpg', 'jpeg'):
-            with open(im_file, 'rb') as f:
-                f.seek(-2, 2)
-                if f.read() != b'\xff\xd9':  # corrupt JPEG
-                    ImageOps.exif_transpose(Image.open(im_file)).save(im_file, 'JPEG', subsampling=0, quality=100)
-                    msg = f'{prefix}WARNING ⚠️ {im_file}: corrupt JPEG restored and saved'
+        ### added ###
+        im = tifffile.imread(im_file)
+        shape = im.shape
+        ### added ###
+
+        ### commented out ###
+        # im = Image.open(im_file)
+        # im.verify()  # PIL verify
+        # shape = exif_size(im)  # image size
+        # assert (shape[0] > 9) & (shape[1] > 9), f'image size {shape} <10 pixels'
+        # assert im.format.lower() in IMG_FORMATS, f'invalid image format {im.format}'
+        # if im.format.lower() in ('jpg', 'jpeg'):
+        #     with open(im_file, 'rb') as f:
+        #         f.seek(-2, 2)
+        #         if f.read() != b'\xff\xd9':  # corrupt JPEG
+        #             ImageOps.exif_transpose(Image.open(im_file)).save(im_file, 'JPEG', subsampling=0, quality=100)
+        #             msg = f'{prefix}WARNING ⚠️ {im_file}: corrupt JPEG restored and saved'
+        ### commented out ###
 
         # verify labels
         if os.path.isfile(lb_file):
