@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#SBATCH -J msrm
+#SBATCH -J baseline
 #SBATCH -p gpu
 #SBATCH -A r00060
 #SBATCH -o filename_%j.txt
@@ -14,8 +14,7 @@
 
 #Load any modules that your program needs
 module load anaconda/python3.8
-module load deeplearning/2.9.1
 
 #Run your program
-python train.py --img 400 --batch 64 --epochs 300 --data ../FADS_EAS_Tree-Throw-Prediction/datasets/TreeThrow.yaml --weights yolov5s.pt --name msrm 
+python train.py --img 400 --batch 64 --epochs 300 --data ../FADS_EAS_Tree-Throw-Prediction/datasets/TreeThrow.yaml --weights yolov5s.pt --name baseline 
 # python val.py --weights runs/train/exp18/weights/best.pt --data ../FADS_EAS_Tree-Throw-Prediction/datasets/TreeThrow.yaml --img 400
