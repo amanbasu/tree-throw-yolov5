@@ -29,25 +29,25 @@ class Albumentations:
             check_version(A.__version__, '1.0.3', hard=True)  # version requirement
 
             T = [
-                # A.Blur(blur_limit=7, p=0.1),
-                # A.MedianBlur(blur_limit=5, p=0.1),
-                # A.ToGray(p=0.1),
-                # A.CLAHE(p=0.1),
-                # A.RandomBrightnessContrast(p=0.1),
-                # A.RandomGamma(p=0.1),
-                # A.GridDistortion(p=0.1),
-                # A.Flip(p=0.1),
-                # A.PixelDropout(p=0.1),
-                # A.RandomRotate90(p=0.1),
-                # A.Sharpen(p=0.1),
-                # A.GaussNoise(p=0.1),
-                # A.ISONoise(p=0.1),
+                A.Blur(blur_limit=7, p=0.1),
+                A.MedianBlur(blur_limit=5, p=0.1),
+                A.ToGray(p=0.1),
+                A.CLAHE(p=0.1),
+                A.RandomBrightnessContrast(p=0.1),
+                A.RandomGamma(p=0.1),
+                A.GridDistortion(p=0.1),
+                A.Flip(p=0.25),
+                A.PixelDropout(p=0.1),
+                A.RandomRotate90(p=0.25),
+                A.Sharpen(p=0.1),
+                A.GaussNoise(p=0.1),
+                A.ISONoise(p=0.1),
             ]
             self.transform = A.Compose(T, bbox_params=A.BboxParams(format='yolo', label_fields=['class_labels']))
 
             LOGGER.info(prefix + ', '.join(f'{x}'.replace('always_apply=False, ', '') for x in T if x.p))
-        except ImportError:  # package not installed, skip
-            pass
+        except ImportError as e:  # package not installed, skip
+            LOGGER.warning(f'{prefix}{e}')
         except Exception as e:
             LOGGER.info(f'{prefix}{e}')
 
