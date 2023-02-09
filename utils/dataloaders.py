@@ -117,7 +117,8 @@ def create_dataloader(path,
                       quad=False,
                       prefix='',
                       shuffle=False,
-                      seed=0):
+                      seed=0,
+                      layers='hpass'):
     if rect and shuffle:
         LOGGER.warning('WARNING ⚠️ --rect is incompatible with DataLoader shuffle, setting shuffle=False')
         shuffle = False
@@ -134,7 +135,8 @@ def create_dataloader(path,
             stride=int(stride),
             pad=pad,
             image_weights=image_weights,
-            prefix=prefix)
+            prefix=prefix,
+            layers=layers)
 
     batch_size = min(batch_size, len(dataset))
     nd = torch.cuda.device_count()  # number of CUDA devices
@@ -432,12 +434,20 @@ def img2label_paths(img_paths):
     return [sb.join(x.rsplit(sa, 1)).rsplit('.', 1)[0] + '.txt' for x in img_paths]
 
 ### added ###
-def read_tif(filename, channels=[3]):
+def read_tif(filename, layers):
     im = tifffile.imread(filename)
     # remove channels not needed
     im2 = np.zeros_like(im)
-    for channel in channels:
-        im2[:, :, channel - 1] = im[:, :, channel - 1]
+
+    if 'hpass' in layers:
+        im2[:, :, 0] = im[:, :, 0]
+    if 'slope' in layers:
+        im2[:, :, 1] = im[:, :, 1]
+    if 'msrm' in layers:
+        im2[:, :, 2] = im[:, :, 2]
+    if im2.sum() == 0:                                                          # baseline case
+        im2 = im
+
     return im2
 ### added ###
 
@@ -459,7 +469,8 @@ class LoadImagesAndLabels(Dataset):
                  stride=32,
                  pad=0.0,
                  min_items=0,
-                 prefix=''):
+                 prefix='',
+                 layers='hpass'):
         self.img_size = img_size
         self.augment = augment
         self.hyp = hyp
@@ -470,6 +481,9 @@ class LoadImagesAndLabels(Dataset):
         self.stride = stride
         self.path = path
         self.albumentations = Albumentations(size=img_size) if augment else None
+        self.layers = layers
+
+        LOGGER.info(f'Using layers: {layers}')
 
         try:
             f = []  # image files
@@ -627,7 +641,7 @@ class LoadImagesAndLabels(Dataset):
         nm, nf, ne, nc, msgs = 0, 0, 0, 0, []  # number missing, found, empty, corrupt, messages
         desc = f"{prefix}Scanning {path.parent / path.stem}..."
         with Pool(NUM_THREADS) as pool:
-            pbar = tqdm(pool.imap(verify_image_label, zip(self.im_files, self.label_files, repeat(prefix))),
+            pbar = tqdm(pool.imap(verify_image_label, zip(self.im_files, self.label_files, self.layers, repeat(prefix))),
                         desc=desc,
                         total=len(self.im_files),
                         bar_format=TQDM_BAR_FORMAT)
@@ -753,7 +767,7 @@ class LoadImagesAndLabels(Dataset):
                 # im = cv2.imread(f)  # BGR
                 ### commented out ###
                 ### added ###
-                im = read_tif(f)
+                im = read_tif(f, self.layers)
 
                 # normalize
                 min_, max_ = im.min(axis=(0, 1)), im.max(axis=(0, 1))
@@ -1027,12 +1041,12 @@ def autosplit(path=DATASETS_DIR / 'coco128/images', weights=(0.9, 0.1, 0.0), ann
 
 def verify_image_label(args):
     # Verify one image-label pair
-    im_file, lb_file, prefix = args
+    im_file, lb_file, layers, prefix = args
     nm, nf, ne, nc, msg, segments = 0, 0, 0, 0, '', []  # number (missing, found, empty, corrupt), message, segments
     try:
         # verify images
         ### added ###
-        im = read_tif(im_file)
+        im = read_tif(im_file, layers)
         shape = im.shape
         ### added ###
 

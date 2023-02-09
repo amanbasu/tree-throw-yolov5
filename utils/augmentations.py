@@ -28,16 +28,21 @@ class Albumentations:
             import albumentations as A
             check_version(A.__version__, '1.0.3', hard=True)  # version requirement
 
-            # T = [
-            #     A.RandomResizedCrop(height=size, width=size, scale=(0.8, 1.0), ratio=(0.9, 1.11), p=0.0),
-            #     A.Blur(p=0.01),
-            #     A.MedianBlur(p=0.01),
-            #     A.ToGray(p=0.01),
-            #     A.CLAHE(p=0.01),
-            #     A.RandomBrightnessContrast(p=0.0),
-            #     A.RandomGamma(p=0.0),
-            #     A.ImageCompression(quality_lower=75, p=0.0)]  # transforms
-            T = []
+            T = [
+                # A.Blur(blur_limit=7, p=0.1),
+                # A.MedianBlur(blur_limit=5, p=0.1),
+                # A.ToGray(p=0.1),
+                # A.CLAHE(p=0.1),
+                # A.RandomBrightnessContrast(p=0.1),
+                # A.RandomGamma(p=0.1),
+                # A.GridDistortion(p=0.1),
+                # A.Flip(p=0.1),
+                # A.PixelDropout(p=0.1),
+                # A.RandomRotate90(p=0.1),
+                # A.Sharpen(p=0.1),
+                # A.GaussNoise(p=0.1),
+                # A.ISONoise(p=0.1),
+            ]
             self.transform = A.Compose(T, bbox_params=A.BboxParams(format='yolo', label_fields=['class_labels']))
 
             LOGGER.info(prefix + ', '.join(f'{x}'.replace('always_apply=False, ', '') for x in T if x.p))

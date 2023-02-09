@@ -7,7 +7,7 @@
 #SBATCH -e filename_%j.err
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=amanagar@iu.edu
-#SBATCH --gpus-per-node=v100:4
+#SBATCH --gpus-per-node=v100:1
 #SBATCH --nodes=1
 #SBATCH --time=40:00:00
 #SBATCH --mem=196G
