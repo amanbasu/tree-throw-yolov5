@@ -432,7 +432,8 @@ def img2label_paths(img_paths):
     return [sb.join(x.rsplit(sa, 1)).rsplit('.', 1)[0] + '.txt' for x in img_paths]
 
 ### added ###
-def read_tif(filename, channels=[1, 2, 3]):
+def read_tif(filename, channels=[1, 3]):
+    # channel 1 - hpass, 2 - slope, 3 - msrm
     im = tifffile.imread(filename)
     # remove channels not needed
     im2 = np.zeros_like(im)

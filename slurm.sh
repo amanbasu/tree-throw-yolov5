@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#SBATCH -J baseline
+#SBATCH -J hpass_msrm
 #SBATCH -p gpu
 #SBATCH -A r00060
 #SBATCH -o filename_%j.txt
@@ -16,5 +16,6 @@
 module load anaconda/python3.8
 
 #Run your program
-python train.py --img 400 --batch 64 --epochs 300 --data ../FADS_EAS_Tree-Throw-Prediction/datasets/TreeThrow.yaml --weights yolov5s.pt --name baseline 
+python train.py --img 400 --batch 64 --epochs 300 --data ../FADS_EAS_Tree-Throw-Prediction/datasets/TreeThrow.yaml --weights yolov5s.pt --name hpass_msrm 
+# python train.py --img 400 --batch 64 --epochs 300 --data ../FADS_EAS_Tree-Throw-Prediction/datasets/TreeThrow.yaml --weights yolov5s.pt --name hpass_msrm --augment
 # python val.py --weights runs/train/exp18/weights/best.pt --data ../FADS_EAS_Tree-Throw-Prediction/datasets/TreeThrow.yaml --img 400

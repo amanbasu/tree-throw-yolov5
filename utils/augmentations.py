@@ -30,7 +30,6 @@ class Albumentations:
 
             T = [
                 A.Blur(blur_limit=7, p=0.1),
-                A.MedianBlur(blur_limit=5, p=0.1),
                 A.ToGray(p=0.1),
                 A.CLAHE(p=0.1),
                 A.RandomBrightnessContrast(p=0.1),

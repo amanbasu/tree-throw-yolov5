@@ -190,7 +190,7 @@ def train(hyp, opt, device, callbacks):  # hyp is path/to/hyp.yaml or hyp dictio
                                               gs,
                                               single_cls,
                                               hyp=hyp,
-                                              augment=True,
+                                              augment=opt.augment,
                                               cache=None if opt.cache == 'val' else opt.cache,
                                               rect=opt.rect,
                                               rank=LOCAL_RANK,
@@ -461,6 +461,7 @@ def parse_opt(known=False):
     parser.add_argument('--exist-ok', action='store_true', help='existing project/name ok, do not increment')
     parser.add_argument('--quad', action='store_true', help='quad dataloader')
     parser.add_argument('--cos-lr', action='store_true', help='cosine LR scheduler')
+    parser.add_argument('--augment', action='store_true', help='apply augmentations')
     parser.add_argument('--label-smoothing', type=float, default=0.0, help='Label smoothing epsilon')
     parser.add_argument('--patience', type=int, default=100, help='EarlyStopping patience (epochs without improvement)')
     parser.add_argument('--freeze', nargs='+', type=int, default=[0], help='Freeze layers: backbone=10, first3=0 1 2')

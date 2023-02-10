@@ -299,6 +299,12 @@ def run(
         confusion_matrix.plot(save_dir=save_dir, names=list(names.values()))
         callbacks.run('on_val_end', nt, tp, fp, p, r, f1, ap, ap50, ap_class, confusion_matrix)
 
+    ### added
+    with open(Path(save_dir) / 'metrics.txt', 'w') as f:
+        f.write('P\tR\tF1\tmAP50\tmAP50-95\n')
+        f.write(f'{mp:.3f}\t{mr:.3f}\t{mf1:.3f}\t{map50:.3f}\t{map:.3f}\n')
+    ### added
+
     # Save JSON
     if save_json and len(jdict):
         w = Path(weights[0] if isinstance(weights, list) else weights).stem if weights is not None else ''  # weights
