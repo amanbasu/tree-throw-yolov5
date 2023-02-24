@@ -34,7 +34,7 @@ class Albumentations:
                 A.CLAHE(p=0.1),
                 A.RandomBrightnessContrast(p=0.1),
                 A.RandomGamma(p=0.1),
-                A.GridDistortion(p=0.1),
+                A.GridDistortion(p=0.0),                                        # not needed, makes image unreal
                 A.Flip(p=0.25),
                 A.PixelDropout(p=0.1),
                 A.RandomRotate90(p=0.25),
