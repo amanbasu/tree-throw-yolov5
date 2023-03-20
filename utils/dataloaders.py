@@ -27,8 +27,8 @@ import yaml
 from PIL import ExifTags, Image, ImageOps
 from torch.utils.data import DataLoader, Dataset, dataloader, distributed
 from tqdm import tqdm
-
 import tifffile
+
 from utils.augmentations import (Albumentations, augment_hsv, classify_albumentations, classify_transforms, copy_paste,
                                  letterbox, mixup, random_perspective)
 from utils.general import (DATASETS_DIR, LOGGER, NUM_THREADS, TQDM_BAR_FORMAT, check_dataset, check_requirements,
@@ -432,14 +432,15 @@ def img2label_paths(img_paths):
     return [sb.join(x.rsplit(sa, 1)).rsplit('.', 1)[0] + '.txt' for x in img_paths]
 
 ### added ###
-def read_tif(filename, channels=[1, 3]):
+def read_tif(filename, channels=[1, 2, 3]):
     # channel 1 - hpass, 2 - slope, 3 - msrm
     im = tifffile.imread(filename)
+    return im
     # remove channels not needed
-    im2 = np.zeros_like(im)
-    for channel in channels:
-        im2[:, :, channel - 1] = im[:, :, channel - 1]
-    return im2
+    # im2 = np.zeros_like(im)
+    # for channel in channels:
+    #     im2[:, :, channel - 1] = im[:, :, channel - 1]
+    # return im2
 ### added ###
 
 class LoadImagesAndLabels(Dataset):
