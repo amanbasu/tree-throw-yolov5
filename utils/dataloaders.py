@@ -716,22 +716,21 @@ class LoadImagesAndLabels(Dataset):
             nl = len(labels)  # update after albumentations
 
             ### commented out
-            # # HSV color-space
+            # HSV color-space
             # augment_hsv(img, hgain=hyp['hsv_h'], sgain=hyp['hsv_s'], vgain=hyp['hsv_v'])
-            
-
-            # # Flip up-down
-            # if random.random() < hyp['flipud']:
-            #     img = np.flipud(img)
-            #     if nl:
-            #         labels[:, 2] = 1 - labels[:, 2]
-
-            # # Flip left-right
-            # if random.random() < hyp['fliplr']:
-            #     img = np.fliplr(img)
-            #     if nl:
-            #         labels[:, 1] = 1 - labels[:, 1]
             ### commented out
+            
+            # Flip up-down
+            if random.random() < hyp['flipud']:
+                img = np.flipud(img)
+                if nl:
+                    labels[:, 2] = 1 - labels[:, 2]
+
+            # Flip left-right
+            if random.random() < hyp['fliplr']:
+                img = np.fliplr(img)
+                if nl:
+                    labels[:, 1] = 1 - labels[:, 1]
 
             # Cutouts
             # labels = cutout(img, labels, p=0.5)

@@ -152,7 +152,7 @@ def run(
                 LOGGER.info(f'Forcing --batch-size 1 square inference (1,3,{imgsz},{imgsz}) for non-PyTorch models')
 
         # Data
-        data = check_dataset(data)  # check
+        data = check_dataset(data, task)  # check
 
     # Configure
     model.eval()
@@ -300,9 +300,19 @@ def run(
         callbacks.run('on_val_end', nt, tp, fp, p, r, f1, ap, ap50, ap_class, confusion_matrix)
 
     ### added
-    with open(Path(save_dir) / 'metrics.txt', 'w') as f:
-        f.write('P\tR\tF1\tmAP50\tmAP50-95\n')
-        f.write(f'{mp:.3f}\t{mr:.3f}\t{mf1:.3f}\t{map50:.3f}\t{map:.3f}\n')
+    # save best eval metrics
+    try:
+        with open(Path(save_dir) / 'metrics.txt', 'r') as f:
+            prev = float(f.readlines()[1].split('\t')[2])
+            if mf1 > prev:
+                LOGGER.info(f'New best F1 score: {mf1:.3f} (previous best was {prev:.3f})')
+                with open(Path(save_dir) / 'metrics.txt', 'w') as f:
+                    f.write('P\tR\tF1\tmAP50\tmAP50-95\n')
+                    f.write(f'{mp:.3f}\t{mr:.3f}\t{mf1:.3f}\t{map50:.3f}\t{map:.3f}\n')
+    except FileNotFoundError:
+        with open(Path(save_dir) / 'metrics.txt', 'w') as f:
+            f.write('P\tR\tF1\tmAP50\tmAP50-95\n')
+            f.write(f'{mp:.3f}\t{mr:.3f}\t{mf1:.3f}\t{map50:.3f}\t{map:.3f}\n')
     ### added
 
     # Save JSON

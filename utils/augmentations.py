@@ -17,7 +17,8 @@ from utils.metrics import bbox_ioa
 
 IMAGENET_MEAN = 0.485, 0.456, 0.406  # RGB mean
 IMAGENET_STD = 0.229, 0.224, 0.225  # RGB standard deviation
-
+# IMAGENET_MEAN = 0.2996, 0.2091, 0.2996  # RGB mean
+# IMAGENET_STD = 0.00605, 0.00605, 0.00605  # RGB standard deviation
 
 class Albumentations:
     # YOLOv5 Albumentations class (optional, only used if package is installed)
@@ -35,7 +36,9 @@ class Albumentations:
                 A.RandomBrightnessContrast(p=0.1),
                 A.RandomGamma(p=0.1),
                 A.GridDistortion(p=0.0),                                        # not needed, makes image unreal
-                A.Flip(p=0.25),
+                # A.Flip(p=0.25),                                       
+                A.HorizontalFlip(p=0.25),                                        # not needed, done in dataloader __getitem__
+                A.VerticalFlip(p=0.25),                                          # not needed, done in dataloader __getitem__
                 A.PixelDropout(p=0.1),
                 A.RandomRotate90(p=0.25),
                 A.Sharpen(p=0.1),
