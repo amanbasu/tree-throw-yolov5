@@ -6,7 +6,7 @@ import argparse
 
 '''
 When labels are downloaded from Roboflow, their original name is changed and 
-appended with a random token. This script removes that token and ranames the
+appended with a random token. This script removes that token and renames the
 label to its orignal name.
 
 Eg.

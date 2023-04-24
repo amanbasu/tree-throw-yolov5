@@ -751,16 +751,12 @@ class LoadImagesAndLabels(Dataset):
                 ### commented out ###
                 # im = cv2.imread(f)  # BGR
                 ### commented out ###
+                
                 ### added ###
+                # image already normalized to 0-255 before saving to tif
                 im = read_tif(f)
-
-                # normalize between 0 and 255 like RGB images
-                # min_, max_ = im.min(axis=(0, 1)), im.max(axis=(0, 1))
-                # with np.errstate(divide='ignore', invalid='ignore'):
-                #     im = (im - min_) / (max_ - min_)
-                # im[np.isnan(im)] = 0                                            # if denomenator is zero
-                # im = (im * 255).astype('uint8')
                 ### added ###
+                
                 assert im is not None, f'Image Not Found {f}'
             h0, w0 = im.shape[:2]  # orig hw
             r = self.img_size / max(h0, w0)  # ratio
