@@ -11,28 +11,28 @@ pip install -r requirements.txt
 ## Folder structure
 ```bash
 tree-throw-yolov5
-├── config-train.json                                 # single place to store script parameters used during training
-├── config-inference.json                             # configurations used during inference
+├── config-train.json                            # single place to store training script parameters
+├── config-inference.json                        # configurations used during inference
 ├── train.py
 ├── val.py
-├── data                                              # folder to store data used for training/inference
-│   ├── dem_files                                     # create one folder per run/use-case
-│   │   ├── in2017_01251380_12_0_1200.tif
+├── data                                         # folder to store data used for training/inference
+│   ├── dem_files                                # create one folder per run/use-case
+│   │   ├── in2017_01251380_12_0_0.tif
 │   │   ├── ...
-├── runs                                              # stores training/inference results of YOLO
+├── runs                                         # stores training/inference results of YOLO
 │   ├── train
 │   │   ├── yolov5
-│   │   │   ├── results.csv                           # training history / metric evolution
-│   │   │   ├── opt.yaml                              # model hyperparameters and training arguments
+│   │   │   ├── results.csv                      # training history / metric evolution
+│   │   │   ├── opt.yaml                         # model hyperparameters and training arguments
 │   │   │   ├── weights                               
-│   │   │   │   ├── best.pt                           # checkpoint of the best model
+│   │   │   │   ├── best.pt                      # checkpoint of the best model
 │   ├── val
 │   │   ├── yolov5
-│   │   │   ├── metrics.txt                           # best validation metrics when you test the model
-│   │   │   ├── labels                                # all model predictions as txt files
-│   │   │   │   ├── in2017_01251380_12_0_1200.txt
+│   │   │   ├── metrics.txt                      # best validation metrics when you test the model
+│   │   │   ├── labels                           # all model predictions as txt files
+│   │   │   │   ├── in2017_01251380_12_0_0.txt
 │   │   │   │   ├── ...
-├── scripts                                           # stores all the custom code for tree-throw
+├── scripts                                      # stores all the custom code for tree-throw
 │   ├── generate_images.py
 │   ├── generate_strided_labels.py
 │   ├── rename_labels.py
