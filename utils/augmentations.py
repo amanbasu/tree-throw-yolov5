@@ -37,8 +37,8 @@ class Albumentations:
                 A.RandomGamma(p=0.1),
                 A.GridDistortion(p=0.0),                                        # not needed, makes image unreal
                 # A.Flip(p=0.25),                                       
-                A.HorizontalFlip(p=0.25),                                        # not needed, done in dataloader __getitem__
-                A.VerticalFlip(p=0.25),                                          # not needed, done in dataloader __getitem__
+                A.HorizontalFlip(p=0.25),
+                A.VerticalFlip(p=0.25),
                 A.PixelDropout(p=0.1),
                 A.RandomRotate90(p=0.25),
                 A.Sharpen(p=0.1),

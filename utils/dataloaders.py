@@ -432,15 +432,10 @@ def img2label_paths(img_paths):
     return [sb.join(x.rsplit(sa, 1)).rsplit('.', 1)[0] + '.txt' for x in img_paths]
 
 ### added ###
-def read_tif(filename, channels=[1, 2, 3]):
+def read_tif(filename):
     # channel 1 - hpass, 2 - slope, 3 - msrm
     im = tifffile.imread(filename)
     return im
-    # remove channels not needed
-    # im2 = np.zeros_like(im)
-    # for channel in channels:
-    #     im2[:, :, channel - 1] = im[:, :, channel - 1]
-    # return im2
 ### added ###
 
 class LoadImagesAndLabels(Dataset):
@@ -759,12 +754,12 @@ class LoadImagesAndLabels(Dataset):
                 ### added ###
                 im = read_tif(f)
 
-                # normalize
-                min_, max_ = im.min(axis=(0, 1)), im.max(axis=(0, 1))
-                with np.errstate(divide='ignore', invalid='ignore'):
-                    im = (im - min_) / (max_ - min_)
-                im[np.isnan(im)] = 0                                            # if denomenator is zero
-                im = (im * 255).astype('uint8')
+                # normalize between 0 and 255 like RGB images
+                # min_, max_ = im.min(axis=(0, 1)), im.max(axis=(0, 1))
+                # with np.errstate(divide='ignore', invalid='ignore'):
+                #     im = (im - min_) / (max_ - min_)
+                # im[np.isnan(im)] = 0                                            # if denomenator is zero
+                # im = (im * 255).astype('uint8')
                 ### added ###
                 assert im is not None, f'Image Not Found {f}'
             h0, w0 = im.shape[:2]  # orig hw
