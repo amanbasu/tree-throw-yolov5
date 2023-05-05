@@ -433,7 +433,7 @@ def img2label_paths(img_paths):
 
 ### added ###
 def read_tif(filename):
-    # channel 1 - hpass, 2 - slope, 3 - msrm
+    # channel 0 - hpass, 1 - slope, 2 - msrm
     im = tifffile.imread(filename)
     return im
 ### added ###

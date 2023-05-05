@@ -1,0 +1,14 @@
+# YOLOv5 🚀 by Ultralytics, GPL-3.0 license
+# Tree-Throw dataset
+# Example usage: python train.py --data TreeThrow.yaml
+
+
+# Train/val/test sets as 1) dir: path/to/imgs, 2) file: path/to/imgs.txt, or 3) list: [path/to/imgs1, path/to/imgs2, ..]
+path: /geode2/home/u010/amanagar/Carbonate/tree-throw-yolov8/dataset-train
+train: train.txt
+val: valid.txt
+test: test.txt
+
+# Classes
+names:
+  0: PMC

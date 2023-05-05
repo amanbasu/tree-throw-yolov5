@@ -5,9 +5,9 @@
 gitpython
 ipython  # interactive notebook
 matplotlib>=3.2.2
-numpy>=1.18.5
+numpy>=1.19.1
 opencv-python>=4.1.1
-Pillow>=7.1.2
+Pillow>=9.2.0
 psutil  # system resources
 PyYAML>=5.3.1
 requests>=2.23.0
@@ -24,26 +24,31 @@ tensorboard>=2.4.1
 # comet
 
 # Plotting --------------------------------------------------------------------
-pandas>=1.1.4
+pandas>=1.4.2
 seaborn>=0.11.0
 
 # Export ----------------------------------------------------------------------
-# coremltools>=6.0  # CoreML export
-# onnx>=1.12.0  # ONNX export
+coremltools>=6.3.0  # CoreML export
+onnx>=1.13.1  # ONNX export
 # onnx-simplifier>=0.4.1  # ONNX simplifier
 # nvidia-pyindex  # TensorRT export
 # nvidia-tensorrt  # TensorRT export
 # scikit-learn<=1.1.2  # CoreML quantization
-# tensorflow>=2.4.1  # TF exports (-cpu, -aarch64, -macos)
-# tensorflowjs>=3.9.0  # TF.js export
-# openvino-dev  # OpenVINO export
+tensorflow>=2.12.0  # TF exports (-cpu, -aarch64, -macos)
+tensorflowjs>=4.4.0  # TF.js export
+openvino>=2022.3.0  # OpenVINO export
 
 # Deploy ----------------------------------------------------------------------
-# tritonclient[all]~=2.24.0
+tritonclient>=2.33.0
 
 # Extras ----------------------------------------------------------------------
-# mss  # screenshots
-# albumentations>=1.0.3
-# pycocotools>=2.0.6  # COCO mAP
+mss>=9.0.1  # screenshots
+albumentations>=1.3.0
+pycocotools>=2.0.4  # COCO mAP
 # roboflow
 # ultralytics  # HUB https://hub.ultralytics.com
+
+# Tif
+GDAL>=3.1.1
+rvt_py>=2.1.0
+tifffile>=2022.10.10

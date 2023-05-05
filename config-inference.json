@@ -3,5 +3,5 @@
     "image_path": "data/BrownCounty2017/",
     "dataset_path": "dataset-brown-county/",
     "pred_path": "runs/val/brown_county_test/labels",
-    "conf_thres": 0.4
+    "conf_thres": 0.32
 }
